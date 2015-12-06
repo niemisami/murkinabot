@@ -1,0 +1,8 @@
+"assari", "assarin", "asseri", "asserin", "ullakko", "yliopisto", "yliopistonmäki", "ässer", "ass", "se"
+"kasvispaska", "kasvisravintola", "brygge"
+"deli", "delipharma", "pharma"
+"ict", "sodexo", "ict-talo", "saatanan", "hyviä", "jauhelihapihvejä"
+"macciavelli"
+"myssy", "silinteri", "myssysilinteri", "myssy ja siilinteri", "myssy & silinteri"
+"tottisalmi", "tottis", "kirkkotie"
+"mantymaki"
