@@ -87,11 +87,16 @@ class Ircbot:
 
             # suoritetaan komennot jos niitä on tullut
 
+
             self.commands[ line[3] ].main( self , line )
 
         except:
 
             pass
+
+    def testing(self):
+
+        self.commands[":!murkinat"].main(self, "brygge")
 
     def mainloop( self ):
 
@@ -112,8 +117,10 @@ class Ircbot:
 
 def main():
 
+
     irc = Ircbot()
-    irc.connect()
-    irc.mainloop()
+    # irc.connect()
+    # irc.mainloop()
+    irc.testing()
 
 if __name__ == '__main__': main()

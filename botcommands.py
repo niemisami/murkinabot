@@ -7,6 +7,7 @@ muutama esimerkki komennoista
 import random
 from bs4 import BeautifulSoup
 import urllib2
+from newbot import MurkinaParser
 # tähän sanastoon lisätään komennot ja niitä vastaavat oliot
 
 command_dict = {}
@@ -61,61 +62,78 @@ class Murkinat:
     def main( self, irc, line):
 
 
-        # markup = urllib2.urlopen('http://murkinat.appspot.com/').read()
-        markup = urllib2.urlopen('http://murkinat.appspot.com/?dayDelta=-2').read()
+        parser = MurkinaParser()
 
-        soup = BeautifulSoup(markup, "html.parser")
+        restaurant_name = parser.parse_restaurant_name(line[2])
+
+        print restaurant_name
+
+        if restaurant_name is None:
+            print "Ei sellaista ravintolaa ole"
+
+        else:
 
 
-        restaurants = soup.find_all('div', class_="restaurant")
+            markup = urllib2.urlopen('http://murkinat.appspot.com').read()
 
 
-        f = open('temp.txt', 'w')
-        errors = open('errors.txt', 'w')
-        for restaurant in restaurants:
+            soup = BeautifulSoup(markup, "html.parser")
 
-            names = restaurant.find('h3', class_="restaurantName")
 
-            output = ""
-            for name in names.stripped_strings:
-                try: 
+            restaurants = soup.find_all('div', class_="restaurant")
 
-                    # print "%s ja %s" %(name, restaurant_name)
-                    # print name.strip() == restaurant_name.strip()
-                    if name == restaurant_name:
-                        f.write(name.encode('utf-8'))
-                        output += name
+
+
+            f = open('temp.txt', 'w')
+            errors = open('errors.txt', 'w')
+            for restaurant in restaurants:
+
+                names = restaurant.find('h3', class_="restaurantName")
+
+                output = ""
+                for name in names.stripped_strings:
+                    try:
+
+                        # print "%s ja %s" %(name, restaurant_name)
+                        # print name.encode('utf-8')  == restaurant_name
+                        # print name.encode('utf-8').replace(u"c2a0".decode('hex'), ' ') == restaurant_name
+
+                        # name = name.encode('hex', 'ignore')
                         # print name
+                        # print "%s ja %s" %(name, restaurant_name)
+                        # print name.strip() == restaurant_name.strip()
+                        if name.encode('utf-8').replace(u"c2a0".decode('hex'), ' ') == restaurant_name:
+                            f.write(name.encode('utf-8'))
+                            output += name
+                            # print name
 
 
-                        meals = restaurant.find_all('table', class_="meals")
+                            meals = restaurant.find_all('table', class_="meals")
 
-                        for meal in meals:
-                            mealNames = meal.find_all('td', class_="mealName")
-                            for mealName in mealNames:
-                                try:
-                                    output += mealName.string
-                                    f.write(mealName.string.encode('utf-8'))
-                                except UnicodeEncodeError:
-                                    print "Unicode error"
+                            for meal in meals:
+                                mealNames = meal.find_all('td', class_="mealName")
+                                for mealName in mealNames:
+                                    try:
+                                        output += mealName.string
+                                        f.write(mealName.string.encode('utf-8'))
+                                    except UnicodeEncodeError:
+                                        print "Unicode error"
 
-                        
-                        irc.send( 'PRIVMSG %s :%s' % ( line[2], mealName.string.encode('utf-8')))
+                            print output
 
-                        break
+                            # irc.send( 'PRIVMSG %s :%s' % ( line[2], output.encode('utf-8')))
+                            break
+                        # else:
+                        #   print "Nimi väärin?"
 
-                    #   print "Nimi väärin?"
-
-                    # print output
-
-                        # irc.send( 'PRIVMSG %s :%s' % ( line[2], output.encode('utf-8')))
+                        # print output
 
 
 
-                except UnicodeEncodeError:
-                       f.write("Error")
 
-
+                    except UnicodeEncodeError as err:
+                        # print 'Error'
+                        f.write("Error")
 
 
 

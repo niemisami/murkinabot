@@ -1,4 +1,4 @@
-"assari", "assarin", "asseri", "asserin", "ullakko", "yliopisto", "yliopistonmäki", "ässer", "ass", "se"
+"assari", "assarin", "asseri", "assarin ullakko", asserin", "ullakko", "yliopisto", "yliopistonmäki", "ässer", "ass", "se"
 "kasvispaska", "kasvisravintola", "brygge"
 "deli", "delipharma", "pharma"
 "ict", "sodexo", "ict-talo", "saatanan", "hyviä", "jauhelihapihvejä"

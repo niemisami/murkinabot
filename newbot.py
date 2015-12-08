@@ -6,7 +6,7 @@ import sys
 import os
 import string 
 
-class Murkinat:
+class MurkinaParser:
 
 	real_names = []
 	other_names = []
@@ -21,7 +21,12 @@ class Murkinat:
 
 	def __init__(self, restaurant_name): 
 		self.init_files()
-		self.main(self.parse_restaurant_name(restaurant_name))
+
+
+		#self.main(self.parse_restaurant_name(restaurant_name))
+
+
+
 
 
 		#Parse restaurant names from file and store them to array
@@ -103,7 +108,8 @@ class Murkinat:
 
 		else:
 
-			markup = urllib2.urlopen('http://murkinat.appspot.com/?dayDelta=-2').read()
+
+			markup = urllib2.urlopen('http://murkinat.appspot.com').read()
 
 
 			soup = BeautifulSoup(markup, "html.parser")
@@ -121,12 +127,17 @@ class Murkinat:
 
 				output = ""
 				for name in names.stripped_strings:
-					try: 
+					try:
 
 						# print "%s ja %s" %(name, restaurant_name)
+						# print name.encode('utf-8')  == restaurant_name
+						# print name.encode('utf-8').replace(u"c2a0".decode('hex'), ' ') == restaurant_name
+
+						# name = name.encode('hex', 'ignore')
+						# print name
+						# print "%s ja %s" %(name, restaurant_name)
 						# print name.strip() == restaurant_name.strip()
-						print name.replace(u' ', '_')
-						if name == restaurant_name:
+						if name.encode('utf-8').replace(u"c2a0".decode('hex'), ' ') == restaurant_name:
 							f.write(name.encode('utf-8'))
 							output += name
 							# print name
@@ -156,7 +167,6 @@ class Murkinat:
 
 
 					except UnicodeEncodeError as err:
-						traceback.print_tb(err.__traceback__)
 						# print 'Error'
 						f.write("Error")
 
