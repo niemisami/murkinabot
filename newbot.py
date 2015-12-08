@@ -21,20 +21,13 @@ class MurkinaParser:
 
 	def __init__(self, restaurant_name): 
 		self.init_files()
-
-
 		#self.main(self.parse_restaurant_name(restaurant_name))
-
-
-
-
 
 		#Parse restaurant names from file and store them to array
 	def init_files(self):
 		ravintola_file = open('raflojen_nimet.txt', 'r').readlines()
 		for name in ravintola_file: 
 			if '\xc3\xa4' in name:
-				print "shit"
 				self.real_names = name.replace('\xc3\xa4', 'a')
 			self.real_names = self.real_names.replace('"', '').split(", ")
 		print self.real_names
@@ -138,7 +131,6 @@ class MurkinaParser:
 						# print "%s ja %s" %(name, restaurant_name)
 						# print name.strip() == restaurant_name.strip()
 						if name.encode('utf-8').replace(u"c2a0".decode('hex'), ' ') == restaurant_name:
-							f.write(name.encode('utf-8'))
 							output += name
 							# print name
 
@@ -150,9 +142,9 @@ class MurkinaParser:
 								for mealName in mealNames:
 									try:
 										output += mealName.string
-										f.write(mealName.string.encode('utf-8'))
 									except UnicodeEncodeError:
 										print "Unicode error"
+										f.write("Error\n")
 
 							print output
 
@@ -168,7 +160,7 @@ class MurkinaParser:
 
 					except UnicodeEncodeError as err:
 						# print 'Error'
-						f.write("Error")
+						f.write("Error\n")
 
 				#irc.send( 'PRIVMSG %s :%s' % ( line[2], name.encode('utf-8')))
 

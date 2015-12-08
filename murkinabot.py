@@ -30,7 +30,7 @@ class Ircbot:
         self.port     = 6667
         self.username = 'murkis'
         self.realname = 'Murkinabotti'
-        self.nick     = 'murkinabotti'
+        self.nick     = 'murkinab'
 
         # luodaan socket
 
@@ -87,6 +87,10 @@ class Ircbot:
 
             # suoritetaan komennot jos niitä on tullut
 
+            # line form :samies!sakrnie@linux.utu.fi PRIVMSG #murkinatesti :!murkinat ict
+            # f = open('requests.txt', 'w')
+            # kirjoitetaan tiedostoon kuka teki kyselyn ja millä parametrilla
+            # f.write("%s: %s" %(line[1],line[2]))
 
             self.commands[ line[3] ].main( self , line )
 
@@ -96,7 +100,7 @@ class Ircbot:
 
     def testing(self):
 
-        self.commands[":!murkinat"].main(self, "brygge")
+        self.commands[":!murkinat"].main(self, ['a', 'b', 'asseri'])
 
     def mainloop( self ):
 
@@ -119,8 +123,8 @@ def main():
 
 
     irc = Ircbot()
-    # irc.connect()
-    # irc.mainloop()
-    irc.testing()
+    irc.connect()
+    irc.mainloop()
+    # irc.testing()
 
 if __name__ == '__main__': main()

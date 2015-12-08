@@ -62,11 +62,8 @@ class Murkinat:
     def main( self, irc, line):
 
 
-        parser = MurkinaParser()
-
-        restaurant_name = parser.parse_restaurant_name(line[2])
-
-        print restaurant_name
+        parser = MurkinaParser("")
+        restaurant_name = parser.parse_restaurant_name(line[4])
 
         if restaurant_name is None:
             print "Ei sellaista ravintolaa ole"
@@ -121,7 +118,7 @@ class Murkinat:
 
                             print output
 
-                            # irc.send( 'PRIVMSG %s :%s' % ( line[2], output.encode('utf-8')))
+                            irc.send( 'PRIVMSG %s :%s' % ( line[2], output.encode('utf-8')))
                             break
                         # else:
                         #   print "Nimi väärin?"
