@@ -8,6 +8,7 @@ import random
 from bs4 import BeautifulSoup
 import urllib2
 from newbot import MurkinaParser
+from datetime import datetime
 # tähän sanastoon lisätään komennot ja niitä vastaavat oliot
 
 command_dict = {}
@@ -101,6 +102,8 @@ class Murkinat:
                         # print name.strip() == restaurant_name.strip()
                         if name.encode('utf-8').replace(u"c2a0".decode('hex'), ' ') == restaurant_name:
                             f.write(name.encode('utf-8'))
+
+                            irc.send2( 'PRIVMSG %s :%s' % ( line[2], name.encode('utf-8')))
                             output += name
                             # print name
 
@@ -111,14 +114,13 @@ class Murkinat:
                                 mealNames = meal.find_all('td', class_="mealName")
                                 for mealName in mealNames:
                                     try:
-                                        output += mealName.string
-                                        f.write(mealName.string.encode('utf-8'))
+                                        for m in mealName.stripped_strings:
+                                            f.write(m.encode('utf-8'))
+                                            irc.send2( 'PRIVMSG %s :%s' % ( line[2], m.encode('utf-8')))
                                     except UnicodeEncodeError:
                                         print "Unicode error"
 
-                            print output
-
-                            irc.send( 'PRIVMSG %s :%s' % ( line[2], output.encode('utf-8')))
+                            self.log(line)
                             break
                         # else:
                         #   print "Nimi väärin?"
@@ -133,6 +135,13 @@ class Murkinat:
                         f.write("Error")
 
 
+    def log(self, line):
+        with open("log.txt", 'a') as f:
+            if len(line) > 4:
+                f.write("%s@%s: %s\n" %(str(datetime.now()),line[0], line[4]))
+            else:
+              f.write("%s: empty" %(line[2]))
 
 
 command_dict[ ':!murkinat' ] = Murkinat()
+

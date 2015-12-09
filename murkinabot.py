@@ -13,6 +13,7 @@ komennot:
 
 import socket
 import botcommands
+from time import sleep
 
 
 
@@ -30,7 +31,7 @@ class Ircbot:
         self.port     = 6667
         self.username = 'murkis'
         self.realname = 'Murkinabotti'
-        self.nick     = 'murkinab'
+        self.nick     = 'murkinabot'
 
         # luodaan socket
 
@@ -53,6 +54,10 @@ class Ircbot:
         # tällä lähetetään viestejä
 
         self.socket.send( string + '\r\n' )
+
+    def send2( self, string):
+        self.socket.send(string + '\n')
+        sleep(0.5)
 
     def connect( self ):
 
@@ -100,7 +105,7 @@ class Ircbot:
 
     def testing(self):
 
-        self.commands[":!murkinat"].main(self, ['a', 'b', 'asseri'])
+        self.commands[":!murkinat"].main(self, ['a', 'b', 'c', 'd','asseri'])
 
     def mainloop( self ):
 
@@ -125,6 +130,6 @@ def main():
     irc = Ircbot()
     irc.connect()
     irc.mainloop()
-    # irc.testing()
+    #irc.testing()
 
 if __name__ == '__main__': main()
