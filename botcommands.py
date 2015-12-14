@@ -14,6 +14,7 @@ from datetime import datetime
 command_dict = {}
 
 
+
 class Test:
 
     def main( self, irc, line ):
@@ -37,12 +38,13 @@ class Quit:
     def main( self, irc , line ):
 
         # määritellään komento vain pääkäyttäjille
-        irc.send( 'PRIVMSG %s :%s, %s' % (line[2], line[0], "sammutetaan"))
         if line[0] in irc.users:
 
+            irc.send( 'PRIVMSG %s :%s, %s' % (line[2], line[0], "sammutetaan"))
             irc.send( 'QUIT' )
             irc.socket.close()
             irc.done = 1
+
 
 command_dict[ ':!quit' ] = Quit()
 
@@ -62,10 +64,16 @@ class Murkinat:
 
     def main( self, irc, line):
 
+        self.parser = MurkinaParser("")
+        restaurant_name = self.parser.parse_restaurant_name(line[4])
 
-        parser = MurkinaParser("")
-        restaurant_name = parser.parse_restaurant_name(line[4])
+        if line[4] == "lista":
+            self.list_restaurants(line)
+            return
 
+        if line[4] = "random":
+            restaurant_name = self.get_random()
+        
         if restaurant_name is None:
             print "Ei sellaista ravintolaa ole"
 
@@ -142,6 +150,23 @@ class Murkinat:
             else:
               f.write("%s: empty" %(line[2]))
 
+    def list_restaurants(self, line):
+
+        output = "Ravintolat: "
+
+        restaurants = self.parser.get_restaurants()
+        for name in restaurants:
+            if name != restaurants[len(restaurants)-1]:
+                output += "%s, " %(name)
+            else:
+                output += name
+
+        irc.send2('PRIVMSG %s :%s' %(line[2],output))
+
+    def get_random(self, line):
+
+
 
 command_dict[ ':!murkinat' ] = Murkinat()
+
 

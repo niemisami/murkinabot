@@ -1,8 +1,9 @@
-"assari", "assarin", "asseri", "assarin ullakko", asserin", "ullakko", "yliopisto", "yliopistonmäki", "ässer", "ass", "se"
-"kasvispaska", "kasvisravintola", "brygge"
-"deli", "delipharma", "pharma"
-"ict", "sodexo", "ict-talo", "saatanan", "hyviä", "jauhelihapihvejä"
-"macciavelli", "velli"
-"myssy", "silinteri", "myssysilinteri", "myssy ja siilinteri", "myssy & silinteri"
-"tottisalmi", "tottis", "kirkkotie"
-"mantymaki", "mäntymäki"
+assari,assarin,asseri,assarin ullakko, asserin,ullakko,yliopisto,yliopistonmäki,ässer,ass,se
+kasvispaska,kasvisravintola,brygge
+deli,delipharma,pharma
+ict,sodexo,ict-talo,saatanan,hyviä,jauhelihapihvejä,nakit
+macciavelli,velli
+myssy,silinteri,myssysilinteri,myssy ja siilinteri,myssy & silinteri
+tottisalmi,tottis,kirkkotie
+mantymaki,mäntymäki
+galilei,agora,kiltis

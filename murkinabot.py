@@ -47,7 +47,8 @@ class Ircbot:
 
         # kanava jolle botti halutaan
 
-        self.channel  = '#murkinatesti'
+        self.channel  = '#trcfood'
+        #self.channel  = '#murkinatesti'
 
     def send( self, string ):
 
@@ -100,12 +101,11 @@ class Ircbot:
             self.commands[ line[3] ].main( self , line )
 
         except:
-
             pass
 
     def testing(self):
 
-        self.commands[":!murkinat"].main(self, ['a', 'b', 'c', 'd','asseri'])
+        self.commands[":!murkinat"].main(self, ['a', 'b', 'c', 'd','lista'])
 
     def mainloop( self ):
 

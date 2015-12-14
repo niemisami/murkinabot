@@ -25,11 +25,11 @@ class MurkinaParser:
 
 		#Parse restaurant names from file and store them to array
 	def init_files(self):
-		ravintola_file = open('raflojen_nimet.txt', 'r').readlines()
+		ravintola_file = open('raflojen_nimet', 'r').readlines()
 		for name in ravintola_file: 
 			if '\xc3\xa4' in name:
 				self.real_names = name.replace('\xc3\xa4', 'a')
-			self.real_names = self.real_names.replace('"', '').split(", ")
+			self.real_names = self.real_names.split(",")
 		print self.real_names
 
 		self.parse_other_names()
@@ -42,16 +42,14 @@ class MurkinaParser:
 		lempinimifile = open('lempinimet.txt', 'r').readlines()
 
 
-		self.assari = lempinimifile[0].replace('"','').split(", ")
-		self.brygge = lempinimifile[1].replace('"','').split(", ")
-		self.delipharma = lempinimifile[2].replace('"','').split(", ")
-		self.ict = lempinimifile[3].replace('"','').split(", ")
-		self.macciavelli = lempinimifile[4].replace('"','').split(", ")
-		self.myssy = lempinimifile[5].replace('"','').split(", ")
-		self.tottisalmi = lempinimifile[6].replace('"','').split(", ")
-		self.mantymaki = lempinimifile[7].replace('"','').split(", ")
-
-
+		self.assari = lempinimifile[0].split(",")
+		self.brygge = lempinimifile[1].split(",")
+		self.delipharma = lempinimifile[2].split(",")
+		self.ict = lempinimifile[3].split(",")
+		self.macciavelli = lempinimifile[4].split(",")
+		self.myssy = lempinimifile[5].split(",")
+		self.tottisalmi = lempinimifile[6].split(",")
+		self.mantymaki = lempinimifile[7].split(",")
 
 
 	def parse_restaurant_name(self,restaurant_name):
@@ -64,6 +62,7 @@ class MurkinaParser:
 		#Lempinimet
 		for rname in self.assari:
 			if restaurant_name == rname.lower():
+				print self.real_names
 				return self.real_names[0]
 
 		for rname in self.brygge:
@@ -169,6 +168,10 @@ class MurkinaParser:
 					
 					#irc.send( 'PRIVMSG %s :%s' % ( line[2], mealName.string.encode('utf-8')))
 
+	def get_restaurants(self):
+		if len(self.real_names) == 0:
+			self.init_files
+		return self.real_names
 
 
 if __name__ == '__main__':
