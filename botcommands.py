@@ -5,8 +5,8 @@ muutama esimerkki komennoista
 """
 
 import random
-from bs4 import BeautifulSoup
 import urllib2
+from bs4 import BeautifulSoup
 from newbot import MurkinaParser
 from datetime import datetime
 # tähän sanastoon lisätään komennot ja niitä vastaavat oliot
@@ -67,13 +67,13 @@ class Murkinat:
         self.parser = MurkinaParser("")
         restaurant_name = self.parser.parse_restaurant_name(line[4])
 
+        print line[4]
         if line[4] == "lista":
             self.list_restaurants(line)
             return
 
-        if line[4] = "random":
+        if line[4] == "random":
             restaurant_name = self.get_random()
-        
         if restaurant_name is None:
             print "Ei sellaista ravintolaa ole"
 
@@ -81,7 +81,6 @@ class Murkinat:
 
 
             markup = urllib2.urlopen('http://murkinat.appspot.com').read()
-
 
             soup = BeautifulSoup(markup, "html.parser")
 
@@ -111,7 +110,7 @@ class Murkinat:
                         if name.encode('utf-8').replace(u"c2a0".decode('hex'), ' ') == restaurant_name:
                             f.write(name.encode('utf-8'))
 
-                            irc.send2( 'PRIVMSG %s :%s' % ( line[2], name.encode('utf-8')))
+                            irc.sendWithDelay( 'PRIVMSG %s :%s' % ( line[2], name.encode('utf-8')))
                             output += name
                             # print name
 
@@ -124,7 +123,7 @@ class Murkinat:
                                     try:
                                         for m in mealName.stripped_strings:
                                             f.write(m.encode('utf-8'))
-                                            irc.send2( 'PRIVMSG %s :%s' % ( line[2], m.encode('utf-8')))
+                                            irc.sendWithDelay( 'PRIVMSG %s :%s' % ( line[2], m.encode('utf-8')))
                                     except UnicodeEncodeError:
                                         print "Unicode error"
 
@@ -161,9 +160,16 @@ class Murkinat:
             else:
                 output += name
 
-        irc.send2('PRIVMSG %s :%s' %(line[2],output))
+        print output
+        irc.sendWithDelay('PRIVMSG %s :%s' %(line[2],output)) 
 
-    def get_random(self, line):
+    def get_random(self):
+        restaurants = self.parser.get_restaurants()
+        rnd = random.randint(0,len(restaurants))
+        return restaurants[rnd]
+        
+
+
 
 
 

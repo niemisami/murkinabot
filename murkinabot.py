@@ -56,7 +56,7 @@ class Ircbot:
 
         self.socket.send( string + '\r\n' )
 
-    def send2( self, string):
+    def sendWithDelay( self, string):
         self.socket.send(string + '\n')
         sleep(0.5)
 

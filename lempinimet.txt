@@ -6,4 +6,4 @@ macciavelli,velli
 myssy,silinteri,myssysilinteri,myssy ja siilinteri,myssy & silinteri
 tottisalmi,tottis,kirkkotie
 mantymaki,mäntymäki
-galilei,agora,kiltis
+galilei,agora,kiltis,galigay
