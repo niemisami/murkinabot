@@ -31,7 +31,7 @@ class Ircbot:
         self.port     = 6667
         self.username = 'murkis'
         self.realname = 'Murkinabotti'
-        self.nick     = 'murkinabot'
+        self.nick     = 'juhannusbotti'
 
         # luodaan socket
 
@@ -48,7 +48,7 @@ class Ircbot:
         # kanava jolle botti halutaan
 
         self.channel  = '#trcfood'
-        #self.channel  = '#murkinatesti'
+        # self.channel  = '#murkinatesti'
 
     def send( self, string ):
 

@@ -169,10 +169,28 @@ class Murkinat:
         return restaurants[rnd]
         
 
+class JuhannusKeneraattori:
+
+    def main(self, irc, line):
+        if len(line[4]) > 0: 
+            jussinimet = ['Dallaspulla','Jeesus','Kossu','Huittisten','Amkkihomo','Onneksi olkoon Mikko','Läski','Kalanaama','Diplomi-Insinööri','Selfie','Homo','Hintti','Hupsu','Perse','Aasi','Aamukalja','Sammuja','Ripuli','Juhannussija','Vässykkä','Penseä','DJ-Sorslund','Hukkuja','Juliuksen mökin viimeinen hereillä oleva sankari joka on ollut ihan törkeässä kännissä koko viikonlopun','Pippelöijä','Forsman','Spagetti']
+            nameArgs = ''
+            for index, name in enumerate(line):
+                if(index >= 4):
+                    nameArgs += '%s ' % line[index] 
+            juhannusnimi = "Juhannusnimesi on: %s" % random.choice(jussinimet) + "-" + nameArgs.title()
+            # print "testi: " + nameArgs;
+            irc.send( 'PRIVMSG %s :%s' % ( line[2], juhannusnimi))
+        else:
+            message = 'Kirjoita vielä nimesi, hintti'
+            irc.send( 'PRIVMSG %s :%s' % ( line[2], message))
+
+
+
 
 
 
 
 command_dict[ ':!murkinat' ] = Murkinat()
 
-
+command_dict[ ':!juhannusnimi' ] = JuhannusKeneraattori()
