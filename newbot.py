@@ -48,6 +48,7 @@ class MurkinaParser:
         self.myssy = lempinimifile[5].split(",")
         self.tottisalmi = lempinimifile[6].split(",")
         self.mantymaki = lempinimifile[7].split(",")
+        self.galilei = lempinimifile[8].split(",")
 
     def parse_restaurant_name(self, restaurant_name):
         print(restaurant_name)

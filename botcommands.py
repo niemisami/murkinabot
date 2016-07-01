@@ -67,26 +67,29 @@ class Murkinat:
         self.parser = MurkinaParser("")
         restaurant_name = self.parser.parse_restaurant_name(line[4])
 
-        print line[4]
-        if line[4] == "lista":
-            self.list_restaurants(line)
-            return
-
-        if line[4] == "random":
-            restaurant_name = self.get_random()
-        if restaurant_name is None:
+        if line[4] == 'help' or line[4] == '-h':
+            pass
+            irc.sendWithDelay( 'PRIVMSG %s :%s' % ( line[2], "Hae Turun ravintoloiden ruokalistat kirjoittamalla !murkinat nimi (esim !murkinat ict)" ))
+            irc.sendWithDelay( 'PRIVMSG %s :%s' % ( line[2], "Muut komennot:"))   
+            irc.sendWithDelay( 'PRIVMSG %s :%s' % ( line[2], "Listaa avoimet ravintolat: !murkinat lista"))   
+            irc.sendWithDelay( 'PRIVMSG %s :%s' % ( line[2], "Ehdottaa satunnaista avoinna olevaa ravintolaa: !murkinat random"))
+        elif restaurant_name is None and line[4] != 'lista' and line[4] != 'random':
             print "Ei sellaista ravintolaa ole"
-
         else:
+            open_restaurants = self.find_menu(irc,restaurant_name)
+            if line[4] == 'random':
+                self.find_menu(irc, self.get_random(open_restaurants))
+            elif line[4] == "lista":
+                irc.sendWithDelay( 'PRIVMSG %s :%s' % ( line[2], list_restaurants(open_restaurants)))
+     
 
 
+
+    def find_menu(self,irc,restaurant_name):
             markup = urllib2.urlopen('http://murkinat.appspot.com').read()
-
             soup = BeautifulSoup(markup, "html.parser")
-
-
             restaurants = soup.find_all('div', class_="restaurant")
-
+            open_restaurants = []
 
 
             f = open('temp.txt', 'w')
@@ -97,6 +100,7 @@ class Murkinat:
 
                 output = ""
                 for name in names.stripped_strings:
+                    open_restaurants.append(name);
                     try:
 
                         # print "%s ja %s" %(name, restaurant_name)
@@ -111,6 +115,7 @@ class Murkinat:
                             f.write(name.encode('utf-8'))
 
                             irc.sendWithDelay( 'PRIVMSG %s :%s' % ( line[2], name.encode('utf-8')))
+                            print "%s ja %s" % (name,restaurant_name)
                             output += name
                             # print name
 
@@ -129,17 +134,11 @@ class Murkinat:
 
                             self.log(line)
                             break
-                        # else:
-                        #   print "Nimi väärin?"
-
-                        # print output
-
-
-
 
                     except UnicodeEncodeError as err:
                         # print 'Error'
                         f.write("Error")
+
 
 
     def log(self, line):
@@ -149,22 +148,17 @@ class Murkinat:
             else:
               f.write("%s: empty" %(line[2]))
 
-    def list_restaurants(self, line):
+    def list_restaurants(self, restaurants):
 
         output = "Ravintolat: "
-
-        restaurants = self.parser.get_restaurants()
         for name in restaurants:
             if name != restaurants[len(restaurants)-1]:
                 output += "%s, " %(name)
             else:
                 output += name
-
-        print output
-        irc.sendWithDelay('PRIVMSG %s :%s' %(line[2],output)) 
-
-    def get_random(self):
-        restaurants = self.parser.get_restaurants()
+        return output
+                                    
+    def get_random(self,restaurants):
         rnd = random.randint(0,len(restaurants))
         return restaurants[rnd]
         

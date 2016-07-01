@@ -9,6 +9,7 @@ komennot:
     !quit
     !anagram
     !murkinat 
+    !juhannusnimi
 """
 
 import socket
@@ -47,8 +48,8 @@ class Ircbot:
 
         # kanava jolle botti halutaan
 
-        self.channel  = '#trcfood'
-        # self.channel  = '#murkinatesti'
+        # self.channel  = '#trcfood'
+        self.channel  = '#murkinatesti'
 
     def send( self, string ):
 
@@ -105,7 +106,7 @@ class Ircbot:
 
     def testing(self):
 
-        self.commands[":!murkinat"].main(self, ['a', 'b', 'c', 'd','lista'])
+        self.commands[":!murkinat"].main(self, ['a', 'b', 'c', 'd','random'])
 
     def mainloop( self ):
 
@@ -130,6 +131,6 @@ def main():
     irc = Ircbot()
     irc.connect()
     irc.mainloop()
-    #irc.testing()
+    # irc.testing()
 
 if __name__ == '__main__': main()
