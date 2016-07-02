@@ -33,7 +33,7 @@ class MurkinaParser:
     def init_files(self):
         ravintola_file = open('raflojen_nimet', 'r').readlines()
         for name in ravintola_file:
-            self.to_unicode(name)
+            # self.to_unicode(name)
             # print '\xc3\xa4'  
             # if '\xc3\xa4' in name:
             #     self.real_names = name.replace('\xc3\xa4', 'a')

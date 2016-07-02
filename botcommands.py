@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
 
-"""
-muutama esimerkki komennoista
-"""
-
 import random
 import urllib2
 from bs4 import BeautifulSoup
@@ -13,32 +9,25 @@ from datetime import datetime
 
 command_dict = {}
 
-
 class Test:
-
     def main(self, irc, line):
-
         irc.send('PRIVMSG %s :Hello world!' % line[2])
 
 command_dict[ ':!test' ] = Test()
 
 
 class Join:
-
     def main( self, irc, line):
-
         irc.send( 'JOIN %s' % ( line[4] ) )
 
 command_dict[ ':!join' ] = Join()
 
 
 class Quit:
-
     def main(self, irc, line):
 
         # määritellään komento vain pääkäyttäjille
         if line[0] in irc.users:
-
             irc.send( 'PRIVMSG %s :%s, %s' % (line[2], line[0], "sammutetaan"))
             irc.send( 'QUIT' )
             irc.socket.close()
@@ -49,12 +38,10 @@ command_dict[ ':!quit' ] = Quit()
 
 
 class Anagram:
-
     def main( self, irc, line):
-
         string = list( ' '.join( line[4:] ) )
-        random.shuffle( string )
-        string = ''.join( string )
+        random.shuffle(string)
+        string = ''.join(string)
         irc.send( 'PRIVMSG %s :%s' % ( line[2], string ) )
 
 command_dict[ ':!anagram' ] = Anagram()
@@ -64,7 +51,9 @@ class Murkinat:
     def main( self, irc, line):
 
         self.parser = MurkinaParser("")
-        self.murkinatesti()
+        self.irc_connection = irc
+        self.irc_line = line
+        self.murkinat(line[4])
 
         # restaurant_name = self.parser.parse_restaurant_name(line[4])
 
@@ -84,16 +73,19 @@ class Murkinat:
         #         irc.sendWithDelay( 'PRIVMSG %s :%s' % ( line[2], list_restaurants(open_restaurants)))
      
 
-    def murkinatesti(self):
+    def murkinat(self,command):
 
 
-        command = "help"
+        # command = "joke" #for testing
 
         if command is None or len(command) == 0:
             self.received_empty_command() 
 
         elif command == "help" or command == "h":
             self.return_help()
+
+        elif command == "joke":
+            self.tell_joke()
 
             # Other commands require loading the murkinat site 
         else:
@@ -116,14 +108,14 @@ class Murkinat:
                 else: 
                     result = self.parse_menu(restaurant_container, restaurant_name)
                     if result:
-                        # self.log(line)
+                        self.log()
                         print "cool"
-                    else:
-
+                    else:  
+                        self.send_irc("Ei olee")
                         print "not cool"
 
 
-        ########Oikeat murkinametodit############
+        ####Oikeat murkinametodit####
     def return_help(self):
     
         self.send_irc("Hae Turun ravintoloiden ruokalistat kirjoittamalla !murkinat nimi (esim !murkinat Ict)")
@@ -131,8 +123,13 @@ class Murkinat:
         self.send_irc("!murkinat lista : Listaa avoimet ravintolat")
         self.send_irc("!murkinat random : Ehdottaa satunnaista avoinna olevaa ravintolaa")
 
-    def return_joke(self):
-        self.send_irc("Vitsi")
+    def tell_joke(self):
+        joke_site = self.parse_website("http://www.gotlines.com/jokes/1")
+        joke_containers = self.parse_div_class_from(joke_site, "line_box_text")
+        jokes = self.parse_class_from_soup_item(joke_containers, "a", "linetext")
+        joke = jokes[0]
+        joke = self.get_random(jokes)
+        self.send_irc(joke)
 
     def return_random_restaurant(self, restaurant_container):
         open_restaurants = self.return_open_restaurants(restaurant_container)
@@ -166,9 +163,10 @@ class Murkinat:
             for name in names.stripped_strings:
                 try:
                     restaurant_name = self.to_unicode(restaurant_name)
+                    print name == restaurant_name
                     if name == restaurant_name:
 
-                        self.send_irc(name.encode('utf-8'))
+                        self.send_irc(name)
                         
                         meals = restaurant.find_all('table', class_="meals")
 
@@ -191,15 +189,15 @@ class Murkinat:
 
         ###### IRC and logging methods######
     def send_irc(self, message):
-        print message
-        # irc.sendWithDelay( 'PRIVMSG %s :%s' % ( line[2], m.encode('utf-8')))
+        # print message
+        self.irc_connection.sendWithDelay('PRIVMSG %s :%s' % (self.irc_line[2], message.encode('utf-8')))
 
     def log(self, line):
         with open("log.txt", 'a') as f:
-            if len(line) > 4:
-                f.write("%s@%s: %s\n" %(str(datetime.now()),line[0], line[4]))
+            if len(self.irc_line) > 4:
+                f.write("%s@%s: %s\n" %(str(datetime.now()),self.irc_line[0], self.irc_line[4]))
             else:
-              f.write("%s: empty" %(line[2]))
+              f.write("%s: empty" %(self.irc_line[2]))
 
     def received_empty_command(self):
         self.send_irc("Tyhjä komento")
@@ -211,9 +209,15 @@ class Murkinat:
 
         # Returns BeautifulSoup item instances as an array. Class e.g "restaurant"
     def parse_div_class_from(self, html_form, class_name):
+        return self.parse_class_from(html_form, 'div', class_name)
+        # soup = BeautifulSoup(html_form, "html.parser")
+        # #For example: restaurants = soup.find_all('div', class_="restaurant")
+        # return soup.find_all('div', class_ = class_name)    
+
+    def parse_class_from(self, html_form, element, class_name):
         soup = BeautifulSoup(html_form, "html.parser")
         #For example: restaurants = soup.find_all('div', class_="restaurant")
-        return soup.find_all('div', class_ = class_name)
+        return soup.find_all(element, class_ = class_name)
 
         # Returns array of parsed Strings from html elments: element_type with class: class_name 
     def parse_class_from_soup_item(self, soup_item_array, element_type, class_name):
@@ -221,7 +225,7 @@ class Murkinat:
         for parent_item in soup_item_array:
             raw_item = parent_item.find(element_type, class_ = class_name)
             for stripped_item in raw_item.stripped_strings:
-                # self.to_unicode(stripped_item)
+                # stripped_item = self.to_unicode(stripped_item)
                 parsed_items.append(stripped_item)
         return parsed_items
 

@@ -8,7 +8,7 @@ komennot:
     !join
     !quit
     !anagram
-    !murkinat 
+    !murkinat
     !juhannusnimi
 """
 
@@ -17,10 +17,9 @@ import botcommands
 from time import sleep
 
 
-
 class Ircbot:
 
-    def __init__( self ):
+    def __init__(self ):
 
         # määritellään botille pääkäyttäjät
 
@@ -28,11 +27,11 @@ class Ircbot:
 
         # välttämättömiä tietoja
 
-        self.server   = 'irc.utu.fi'
-        self.port     = 6667
+        self.server = 'irc.utu.fi'
+        self.port = 6667
         self.username = 'murkis'
         self.realname = 'Murkinabotti'
-        self.nick     = 'juhannusbotti'
+        self.nick = 'murkinabot'
 
         # luodaan socket
 
@@ -55,7 +54,7 @@ class Ircbot:
 
         # tällä lähetetään viestejä
 
-        self.socket.send( string + '\r\n' )
+        self.socket.send( string + '\n' )
 
     def sendWithDelay( self, string):
         self.socket.send(string + '\n')
@@ -65,9 +64,9 @@ class Ircbot:
 
         # yhdistetään serveriin ja läheteään omat tiedot
 
-        self.socket.connect( ( self.server, self.port ) )
-        self.send( 'NICK %s' % self.nick )
-        self.send( 'USER %s a a :%s' % ( self.username, self.realname ) )
+        self.socket.connect((self.server, self.port))
+        self.send( 'NICK %s' % self.nick)
+        self.send( 'USER %s a a :%s' % (self.username, self.realname))
 
         # liitytään kanavalle
 
@@ -127,10 +126,9 @@ class Ircbot:
 
 def main():
 
-
     irc = Ircbot()
-    # irc.connect()
-    # irc.mainloop()
-    irc.testing()
+    irc.connect()
+    irc.mainloop()
+    # irc.testing()
 
-if __name__ == '__main__': main()
+if __name__ == '__main__' : main()
