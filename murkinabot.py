@@ -129,8 +129,8 @@ def main():
 
 
     irc = Ircbot()
-    irc.connect()
-    irc.mainloop()
-    # irc.testing()
+    # irc.connect()
+    # irc.mainloop()
+    irc.testing()
 
 if __name__ == '__main__': main()
