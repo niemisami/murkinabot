@@ -124,7 +124,10 @@ class Murkinat:
         self.send_irc("!murkinat random : Ehdottaa satunnaista avoinna olevaa ravintolaa")
 
     def tell_joke(self):
-        joke_site = self.parse_website("http://www.gotlines.com/jokes/1")
+        rnd = random.randint(0,3)
+        url = "http://www.gotlines.com/jokes/%d" % rnd
+        print url
+        joke_site = self.parse_website(url)
         joke_containers = self.parse_div_class_from(joke_site, "line_box_text")
         jokes = self.parse_class_from_soup_item(joke_containers, "a", "linetext")
         joke = jokes[0]
