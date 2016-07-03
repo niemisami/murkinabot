@@ -35,7 +35,7 @@ class Ircbot:
 
         # luodaan socket
 
-        self.socket   = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.socket   = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
 
         # haetaan botille komennot
 
@@ -51,36 +51,32 @@ class Ircbot:
         self.channel  = '#murkinatesti'
 
     def send( self, string ):
-
-        # tällä lähetetään viestejä
-
-        self.socket.send( string + '\n' )
+        self.socket.send((string + '\n').encode())
 
     def sendWithDelay( self, string):
-        self.socket.send(string + '\n')
+        self.send(string + '\n')
         sleep(0.5)
 
     def connect( self ):
 
         # yhdistetään serveriin ja läheteään omat tiedot
 
+        
         self.socket.connect((self.server, self.port))
+        
         self.send( 'NICK %s' % self.nick)
         self.send( 'USER %s a a :%s' % (self.username, self.realname))
 
         # liitytään kanavalle
-
         self.send( 'JOIN %s' % self.channel )
 
     def check( self, line ):
 
-        print line
+        print(line)
         line = line.split(' ')
 
         # vastataan pingiin muuten serveri katkaisee yhteyden
-
         if line[0] == 'PING':
-
              self.send( 'PONG :abc' )
 
         try:
@@ -98,7 +94,7 @@ class Ircbot:
             # kirjoitetaan tiedostoon kuka teki kyselyn ja millä parametrilla
             # f.write("%s: %s" %(line[1],line[2]))
 
-            self.commands[ line[3] ].main( self , line )
+            self.commands[line[3]].main( self , line )
 
         except:
             pass
@@ -114,13 +110,13 @@ class Ircbot:
         while not self.done:
 
         # vastaanotetaan dataa
-
-            buffer += self.socket.recv( 4096 )
-            buffer = buffer.split( '\r\n' )
+            recv_data = b''
+            recv_data += self.socket.recv(4096)
+            buffer = recv_data.decode().split('\r\n')
 
             for line in buffer[0:-1]:
 
-                self.check( line )
+                self.check(line) 
 
             buffer = buffer[-1]
 

@@ -3,7 +3,7 @@
 from bs4 import BeautifulSoup
 import os
 import string
-import urllib2
+import urllib
 import sys
 
 
@@ -24,23 +24,11 @@ class MurkinaParser:
         self.init_files()
         # self.main(self.parse_restaurant_name(restaurant_name))
 
-    def to_unicode(obj, encoding='utf-8'):
-        if isinstance(obj, basestring):
-            if not isinstance(obj, unicode):
-                obj = unicode(obj, encoding)
-        return obj
         # Parse restaurant names from file and store them to array
     def init_files(self):
-        ravintola_file = open('raflojen_nimet', 'r').readlines()
+        ravintola_file = open('raflojen_nimet', 'r',encoding="utf-8").readlines()
         for name in ravintola_file:
-            # self.to_unicode(name)
-            # print '\xc3\xa4'  
-            # if '\xc3\xa4' in name:
-            #     self.real_names = name.replace('\xc3\xa4', 'a')
-            #     print "ae'd"
             self.real_names = name.split(",")
-
-        print self.real_names
 
         self.parse_other_names()
 
@@ -48,7 +36,7 @@ class MurkinaParser:
 
 
     def parse_other_names(self):
-        lempinimifile = open('lempinimet.txt', 'r').readlines()
+        lempinimifile = open('lempinimet.txt', 'r', encoding='utf-8').readlines()
 
         self.assari = lempinimifile[0].split(",")
         self.brygge = lempinimifile[1].split(",")

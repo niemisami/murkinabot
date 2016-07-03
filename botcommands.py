@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import random
-import urllib2
+try:
+    # For Python 3.0 and later
+    from urllib.request import urlopen
+except ImportError:
+    # Fall back to Python 2's urllib2
+    from urllib2 import urlopen
 from bs4 import BeautifulSoup
 from newbot import MurkinaParser
 from datetime import datetime
@@ -76,7 +81,7 @@ class Murkinat:
     def murkinat(self,command):
 
 
-        # command = "joke" #for testing
+        # command = "help" #for testing
 
         if command is None or len(command) == 0:
             self.received_empty_command() 
@@ -99,7 +104,6 @@ class Murkinat:
 
             elif command == "random":
                 random_name = self.return_random_restaurant(restaurant_container)
-                print random_name
 
             else:
                 restaurant_name = self.parser.parse_restaurant_name(command)
@@ -109,16 +113,16 @@ class Murkinat:
                     result = self.parse_menu(restaurant_container, restaurant_name)
                     if result:
                         self.log()
-                        print "cool"
+                        print("cool")
                     else:  
                         self.send_irc("Ei olee")
-                        print "not cool"
+                        print("not cool")
 
 
         ####Oikeat murkinametodit####
     def return_help(self):
     
-        self.send_irc("Hae Turun ravintoloiden ruokalistat kirjoittamalla !murkinat nimi (esim !murkinat Ict)")
+        self.send_irc("Hae Turun ravintoloiden ruokalistat kirjoittamalla !murkinat nimi (esim !murkinat ICT)")
         self.send_irc("Muut komennot:")
         self.send_irc("!murkinat lista : Listaa avoimet ravintolat")
         self.send_irc("!murkinat random : Ehdottaa satunnaista avoinna olevaa ravintolaa")
@@ -126,7 +130,7 @@ class Murkinat:
     def tell_joke(self):
         rnd = random.randint(0,3)
         url = "http://www.gotlines.com/jokes/%d" % rnd
-        print url
+        print(url)
         joke_site = self.parse_website(url)
         joke_containers = self.parse_div_class_from(joke_site, "line_box_text")
         jokes = self.parse_class_from_soup_item(joke_containers, "a", "linetext")
@@ -166,7 +170,7 @@ class Murkinat:
             for name in names.stripped_strings:
                 try:
                     restaurant_name = self.to_unicode(restaurant_name)
-                    print name == restaurant_name
+                    print(name == restaurant_name)
                     if name == restaurant_name:
 
                         self.send_irc(name)
@@ -181,18 +185,18 @@ class Murkinat:
                                         self.send_irc(m)
 
                                 except UnicodeEncodeError:
-                                    print "Unicode error"
+                                    print("Unicode error")
                         return True #Success
 
                 except UnicodeEncodeError as err:
-                    print 'Error'
+                    print('Error')
                     errors.write("Error")
         return False #Faile
 
 
         ###### IRC and logging methods######
     def send_irc(self, message):
-        # print message
+        # print(message)
         self.irc_connection.sendWithDelay('PRIVMSG %s :%s' % (self.irc_line[2], message.encode('utf-8')))
 
     def log(self, line):
@@ -208,7 +212,7 @@ class Murkinat:
 
     #####BeautifulSoup helper methods########
     def parse_website(self, url):
-        return urllib2.urlopen(url).read()
+        return urlopen(url).read()
 
         # Returns BeautifulSoup item instances as an array. Class e.g "restaurant"
     def parse_div_class_from(self, html_form, class_name):
@@ -244,19 +248,17 @@ class Murkinat:
         #     print "khyl"
         #     return encodable_text.encode('utf-8').replace('\xc3\xa4', 'ä')
         if u'c2a0' in encodable_text:
-            print "juu "
             return encodable_text.replace('c2a0'.decode('hex'), ' ')
         return encodable_text
 
     def to_unicode(self,obj, encoding='utf-8'):
-        if isinstance(obj, basestring):
-            if not isinstance(obj, unicode):
-                obj = unicode(obj, encoding)
+        # if isinstance(obj, str):
+        #     if not isinstance(obj, unicode):
+        #         obj = unicode(obj, encoding)
         return obj
 
     def get_random(self,restaurants):
         rnd = random.randint(0,len(restaurants)-1)
-        # print "%s length: %s" % (rnd, len(restaurants))
         return restaurants[rnd]
 
 
