@@ -76,7 +76,12 @@ class Murkinat:
     def murkinat(self,command):
 
 
+        # command = "" #for testing
+        # command = "help" #for testing
         # command = "joke" #for testing
+        # command = "lista" #for testing
+        # command = "random" #for testing
+        # command = "mäntymäki" #for testing
 
         if command is None or len(command) == 0:
             self.received_empty_command() 
@@ -108,7 +113,7 @@ class Murkinat:
                 else: 
                     result = self.parse_menu(restaurant_container, restaurant_name)
                     if result:
-                        self.log()
+                        # self.log()
                         print "cool"
                     else:  
                         self.send_irc("Ei olee")
@@ -165,13 +170,22 @@ class Murkinat:
             names = restaurant.find('h3', class_="restaurantName")
             for name in names.stripped_strings:
                 try:
+                    # print restaurant_name
+                    # print name
                     restaurant_name = self.to_unicode(restaurant_name)
-                    print name == restaurant_name
+                    if u"\u00A0" in name:
+                        name = name.replace(u"\u00A0", " ")    
+                    # for c in name:
+                    #         print ord(c)
+                    # print ""
+                    # for c in restaurant_name:
+                    #         print ord(c)
                     if name == restaurant_name:
 
                         self.send_irc(name)
                         
                         meals = restaurant.find_all('table', class_="meals")
+
 
                         for meal in meals:
                             mealNames = meal.find_all('td', class_="mealName")
@@ -198,7 +212,7 @@ class Murkinat:
     def log(self, line):
         with open("log.txt", 'a') as f:
             if len(self.irc_line) > 4:
-                f.write("%s@%s: %s\n" %(str(datetime.now()),self.irc_line[0], self.irc_line[4]))
+                f.write("%s@%s: %s\r\n" %(str(datetime.now()),self.irc_line[0], self.irc_line[4]))
             else:
               f.write("%s: empty" %(self.irc_line[2]))
 

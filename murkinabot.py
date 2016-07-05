@@ -47,8 +47,8 @@ class Ircbot:
 
         # kanava jolle botti halutaan
 
-        # self.channel  = '#trcfood'
-        self.channel  = '#murkinatesti'
+        self.channel  = '#trcfood'
+        # self.channel  = '#murkinatesti'
 
     def send( self, string ):
 
