@@ -46,6 +46,17 @@ class Anagram:
 
 command_dict[ ':!anagram' ] = Anagram()
 
+
+class Kolikko:
+    def main( self, irc, line):
+        replyTo = line[0][1:line[0].index('!')]
+        cointoss = random.randint(0,1)
+        result = "Klaava" if cointoss == 0 else "Kruuna"
+        string = replyTo + ": " + result
+        irc.send( 'PRIVMSG %s :%s' % (line[2], string) )
+
+command_dict[ ':!kolikko' ] = Kolikko()
+
 class Murkinat:
 
     def main( self, irc, line):
