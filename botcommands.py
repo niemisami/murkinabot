@@ -57,7 +57,7 @@ class Murkinat:
 
         commands = line[4:]
         
-        self.murkinat(line[4])
+        self.murkinat(commands)
 
         # restaurant_name = self.parser.parse_restaurant_name(line[4])
 
@@ -77,12 +77,13 @@ class Murkinat:
         #         irc.sendWithDelay( 'PRIVMSG %s :%s' % ( line[2], list_restaurants(open_restaurants)))
      
 
-    def murkinat(self,command):
+    def murkinat(self,commands):
 
+        command = commands[0]
 
         # command = "" #for testing
         # command = "help" #for testing
-        command = "joke" #for testing
+        # command = "joke" #for testing
         # command = "lista" #for testing
         # command = "random" #for testing
         # command = "mäntymäki" #for testing
@@ -108,17 +109,26 @@ class Murkinat:
                 print random_name
 
             else:
-                restaurant_name = self.parser.parse_restaurant_name(command)
-                if restaurant_name is None:
-                    self.return_wrong_name_error()
-                else: 
-                    result = self.parse_menu(restaurant_container, restaurant_name)
-                    if result:
-                        # self.log()
-                        print "cool"
-                    else:  
-                        self.send_irc("Ei olee")
-                        print "not cool"
+                index = 0
+                # TODO continue:
+                # commands = self.remove_duplicates(commands) 
+                for command in commands:
+
+                    restaurant_name = self.parser.parse_restaurant_name(command)
+                    if restaurant_name is None:
+                        self.return_wrong_name_error()
+                    else: 
+                        result = self.parse_menu(restaurant_container, restaurant_name)
+                        if result:
+                            # self.log()
+                            print "cool"
+                        else:  
+                            self.send_irc("Ei olee")
+                            print "not cool"
+                    
+                    if(index > 5): # No reason to get all the restaurants and pollute irc channel
+                        break
+                    index += 1
 
 
         ####Oikeat murkinametodit####
@@ -128,6 +138,7 @@ class Murkinat:
         self.send_irc("Muut komennot:")
         self.send_irc("!murkinat lista : Listaa avoimet ravintolat")
         self.send_irc("!murkinat random : Ehdottaa satunnaista avoinna olevaa ravintolaa")
+        self.send_irc("!murkinat ict delica mikro: Listaa max 5 ravintolaa")
 
     def return_random_restaurant(self, restaurant_container):
         open_restaurants = self.return_open_restaurants(restaurant_container)
@@ -193,8 +204,8 @@ class Murkinat:
 
         ###### IRC and logging methods######
     def send_irc(self, message):
-        print message
-        # self.irc_connection.sendWithDelay('PRIVMSG %s :%s' % (self.irc_line[2], message.encode('utf-8')))
+        # print message
+        self.irc_connection.sendWithDelay('PRIVMSG %s :%s' % (self.irc_line[2], message.encode('utf-8')))
 
     def log(self, line):
         with open("log.txt", 'a') as f:
@@ -212,10 +223,17 @@ class Murkinat:
         #     print "khyl"
         #     return encodable_text.encode('utf-8').replace('\xc3\xa4', 'ä')
         if u'c2a0' in encodable_text:
-            print "juu "
+            print "encoding "
             return encodable_text.replace('c2a0'.decode('hex'), ' ')
         return encodable_text
 
+        # TODO 
+    def remove_duplicates(self, item_list):
+        for i in range(0,len(item_list)-1):
+            for j in range(0, len(item_list)-1):
+                pass
+                # if i != j and item_list[i] == item_list[j]:
+                #     print item_list[i]
 
 
 
@@ -267,8 +285,6 @@ class WebsiteParser:
         # return soup_result_set.stripped_strings
         # for stripped_result in soup_result_set:
             # print stripped_result.string
-            
-
 
     def to_unicode(self,obj, encoding='utf-8'):
         if isinstance(obj, basestring):
@@ -305,7 +321,7 @@ class Jokes:
         self.websiteParser = WebsiteParser()
         self.irc_connection = irc
         self.irc_line = line
-        if line[4] == "digit":
+        if len(line) >= 5 and line[4] == "digit":  
             self.tell_digit_joke()
         else:   
             self.tell_joke()
@@ -332,7 +348,6 @@ class Jokes:
         index = 0;
         while len(joke) < 5:
             joke = self.websiteParser.get_random(jokes)
-
         self.send_irc(joke)
 
     def send_irc(self, message):

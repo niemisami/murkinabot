@@ -46,8 +46,8 @@ class Ircbot:
         self.done     = 0
 
         # kanava jolle botti halutaan
-        # self.channel  = '#trcfood'
-        self.channel  = '#murkinatesti'
+        self.channel  = '#trcfood'
+        # self.channel  = '#murkinatesti'
 
     def send( self, string ):
 
@@ -57,7 +57,7 @@ class Ircbot:
 
     def sendWithDelay( self, string):
         self.socket.send(string + '\n')
-        sleep(0.5)
+        sleep(0.3)
 
     def connect( self ):
 
@@ -105,7 +105,7 @@ class Ircbot:
     def testing(self):
 
         # Testaa seuraavia komentoja 
-        # self.commands[":!murkinat"].main(self, ['a', 'b', 'c', 'd','Tottis'])
+        # self.commands[":!murkinat"].main(self, ['a', 'b', 'c', 'd','Tottis', 'ict', 'perse', 'ict', 'mikro', 'maccis'])
         # self.commands[":!juhannisnimi"].main(self, ['a', 'b', 'c', 'd','Sami'])
         self.commands[":!vitshumor"].main(self, ['a', 'b', 'c', 'd','digit'])
 
