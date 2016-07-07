@@ -46,9 +46,8 @@ class Ircbot:
         self.done     = 0
 
         # kanava jolle botti halutaan
-
-        self.channel  = '#trcfood'
-        # self.channel  = '#murkinatesti'
+        # self.channel  = '#trcfood'
+        self.channel  = '#murkinatesti'
 
     def send( self, string ):
 
@@ -105,7 +104,10 @@ class Ircbot:
 
     def testing(self):
 
-        self.commands[":!murkinat"].main(self, ['a', 'b', 'c', 'd','random'])
+        # Testaa seuraavia komentoja 
+        # self.commands[":!murkinat"].main(self, ['a', 'b', 'c', 'd','Tottis'])
+        # self.commands[":!juhannisnimi"].main(self, ['a', 'b', 'c', 'd','Sami'])
+        self.commands[":!vitshumor"].main(self, ['a', 'b', 'c', 'd','digit'])
 
     def mainloop( self ):
 

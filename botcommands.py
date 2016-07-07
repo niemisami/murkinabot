@@ -51,8 +51,12 @@ class Murkinat:
     def main( self, irc, line):
 
         self.parser = MurkinaParser("")
+        self.websiteParser = WebsiteParser()
         self.irc_connection = irc
         self.irc_line = line
+
+        commands = line[4:]
+        
         self.murkinat(line[4])
 
         # restaurant_name = self.parser.parse_restaurant_name(line[4])
@@ -78,7 +82,7 @@ class Murkinat:
 
         # command = "" #for testing
         # command = "help" #for testing
-        # command = "joke" #for testing
+        command = "joke" #for testing
         # command = "lista" #for testing
         # command = "random" #for testing
         # command = "mäntymäki" #for testing
@@ -89,14 +93,11 @@ class Murkinat:
         elif command == "help" or command == "h":
             self.return_help()
 
-        elif command == "joke":
-            self.tell_joke()
-
             # Other commands require loading the murkinat site 
         else:
             command = command.lower()
             murkinat_site = self.load_murkinat_html()
-            restaurant_container = self.parse_div_class_from(murkinat_site,"restaurant")
+            restaurant_container = self.websiteParser.parse_div_class_from(murkinat_site,"restaurant")
 
             if command == "lista":
                 open_restaurants = self.return_open_restaurants(restaurant_container)
@@ -128,32 +129,21 @@ class Murkinat:
         self.send_irc("!murkinat lista : Listaa avoimet ravintolat")
         self.send_irc("!murkinat random : Ehdottaa satunnaista avoinna olevaa ravintolaa")
 
-    def tell_joke(self):
-        rnd = random.randint(0,3)
-        url = "http://www.gotlines.com/jokes/%d" % rnd
-        print url
-        joke_site = self.parse_website(url)
-        joke_containers = self.parse_div_class_from(joke_site, "line_box_text")
-        jokes = self.parse_class_from_soup_item(joke_containers, "a", "linetext")
-        joke = jokes[0]
-        joke = self.get_random(jokes)
-        self.send_irc(joke)
-
     def return_random_restaurant(self, restaurant_container):
         open_restaurants = self.return_open_restaurants(restaurant_container)
         # print open_restaurants
-        random_name = self.get_random(open_restaurants)
+        random_name = self.websiteParser.get_random(open_restaurants)
         # print random_name
         self.parse_menu(restaurant_container, random_name)
 
     def return_wrong_name_error(self):
-        self.send_irc("paska nimi")
+        self.send_irc("Oh noes! Tuntematon ravintola")
 
     def load_murkinat_html(self):
-        return self.parse_website('http://murkinat.appspot.com')
+        return self.websiteParser.parse_website('http://murkinat.appspot.com')
 
     def return_open_restaurants(self, restaurant_container):
-        return self.parse_class_from_soup_item(restaurant_container, "h3", "restaurantName")
+        return self.websiteParser.parse_class_from_soup_item(restaurant_container, "h3", "restaurantName")
 
     def list_restaurants(self, restaurants):
         output = "Avoimet ravintolat: "
@@ -172,7 +162,7 @@ class Murkinat:
                 try:
                     # print restaurant_name
                     # print name
-                    restaurant_name = self.to_unicode(restaurant_name)
+                    restaurant_name = self.websiteParser.to_unicode(restaurant_name)
                     if u"\u00A0" in name:
                         name = name.replace(u"\u00A0", " ")    
                     # for c in name:
@@ -190,24 +180,21 @@ class Murkinat:
                         for meal in meals:
                             mealNames = meal.find_all('td', class_="mealName")
                             for mealName in mealNames:
-                                try:
+                            
                                     for m in mealName.stripped_strings:
                                         self.send_irc(m)
-
-                                except UnicodeEncodeError:
-                                    print "Unicode error"
                         return True #Success
 
                 except UnicodeEncodeError as err:
                     print 'Error'
                     errors.write("Error")
-        return False #Faile
+        return False #Fail
 
 
         ###### IRC and logging methods######
     def send_irc(self, message):
-        # print message
-        self.irc_connection.sendWithDelay('PRIVMSG %s :%s' % (self.irc_line[2], message.encode('utf-8')))
+        print message
+        # self.irc_connection.sendWithDelay('PRIVMSG %s :%s' % (self.irc_line[2], message.encode('utf-8')))
 
     def log(self, line):
         with open("log.txt", 'a') as f:
@@ -220,7 +207,24 @@ class Murkinat:
         self.send_irc("Tyhjä komento")
 
 
-    #####BeautifulSoup helper methods########
+    def encode(self,encodable_text):
+        # if '\xc3\xa4' in encodable_text.encode('utf-8'):
+        #     print "khyl"
+        #     return encodable_text.encode('utf-8').replace('\xc3\xa4', 'ä')
+        if u'c2a0' in encodable_text:
+            print "juu "
+            return encodable_text.replace('c2a0'.decode('hex'), ' ')
+        return encodable_text
+
+
+
+
+class WebsiteParser:
+
+    def __init__(self):
+        pass
+
+        #####BeautifulSoup helper methods########
     def parse_website(self, url):
         return urllib2.urlopen(url).read()
 
@@ -236,6 +240,12 @@ class Murkinat:
         #For example: restaurants = soup.find_all('div', class_="restaurant")
         return soup.find_all(element, class_ = class_name)
 
+    def parse_all_elements(self, html_form, element_type):
+        soup = BeautifulSoup(html_form, "html.parser")
+        #For example: restaurants = soup.find_all('div', class_="restaurant")
+        # for raw_item in soup.find_all(element_type):
+        return soup.find_all(element_type)
+
         # Returns array of parsed Strings from html elments: element_type with class: class_name 
     def parse_class_from_soup_item(self, soup_item_array, element_type, class_name):
         parsed_items = []
@@ -250,17 +260,15 @@ class Murkinat:
         ####Helper methods######
     def get_stripped_strings(self, soup_result_set):
         stripped_array = []
-        for stripped_result in soup_result_set:
-            pass
+        for raw_item in soup_result_set:
+            for item in raw_item.stripped_strings:
+                stripped_array.append(item) 
+        return stripped_array
+        # return soup_result_set.stripped_strings
+        # for stripped_result in soup_result_set:
+            # print stripped_result.string
+            
 
-    def encode(self,encodable_text):
-        # if '\xc3\xa4' in encodable_text.encode('utf-8'):
-        #     print "khyl"
-        #     return encodable_text.encode('utf-8').replace('\xc3\xa4', 'ä')
-        if u'c2a0' in encodable_text:
-            print "juu "
-            return encodable_text.replace('c2a0'.decode('hex'), ' ')
-        return encodable_text
 
     def to_unicode(self,obj, encoding='utf-8'):
         if isinstance(obj, basestring):
@@ -272,8 +280,6 @@ class Murkinat:
         rnd = random.randint(0,len(restaurants)-1)
         # print "%s length: %s" % (rnd, len(restaurants))
         return restaurants[rnd]
-
-
 
         
 
@@ -293,7 +299,45 @@ class JuhannusKeneraattori:
             message = 'Kirjoita vielä nimesi'
             irc.send( 'PRIVMSG %s :%s' % ( line[2], message))
 
+class Jokes:
 
+    def main(self, irc, line):
+        self.websiteParser = WebsiteParser()
+        self.irc_connection = irc
+        self.irc_line = line
+        if line[4] == "digit":
+            self.tell_digit_joke()
+        else:   
+            self.tell_joke()
+
+    def tell_joke(self):
+        rnd = random.randint(0,4)
+        url = "http://www.gotlines.com/jokes/%d" % rnd
+        # print url
+        joke_site = self.websiteParser.parse_website(url)
+        joke_containers = self.websiteParser.parse_div_class_from(joke_site, "line_box_text")
+        jokes = self.websiteParser.parse_class_from_soup_item(joke_containers, "a", "linetext")
+        joke = jokes[0]
+        joke = self.websiteParser.get_random(jokes)
+        self.send_irc(joke)  
+
+    def tell_digit_joke(self):
+        url = "http://wiki.digit.fi/Vitsiarkisto"
+        joke_site = self.websiteParser.parse_website(url)
+        joke_containers = self.websiteParser.parse_all_elements(joke_site, "p")
+        jokes = self.websiteParser.get_stripped_strings(joke_containers)
+        
+        joke = ""
+        # Site has few short lines or random characters so filter those out
+        index = 0;
+        while len(joke) < 5:
+            joke = self.websiteParser.get_random(jokes)
+
+        self.send_irc(joke)
+
+    def send_irc(self, message):
+        # print message
+        self.irc_connection.sendWithDelay('PRIVMSG %s :%s' % (self.irc_line[2], message.encode('utf-8')))
 
 
 
@@ -302,3 +346,5 @@ class JuhannusKeneraattori:
 command_dict[ ':!murkinat' ] = Murkinat()
 
 command_dict[ ':!juhannusnimi' ] = JuhannusKeneraattori()
+
+command_dict[ ':!vitshumor' ] = Jokes()
