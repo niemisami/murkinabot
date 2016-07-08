@@ -4,7 +4,8 @@ import random
 import urllib2
 from bs4 import BeautifulSoup
 from newbot import MurkinaParser
-From datetime import datetime
+from datetime import datetime
+
 # tähän sanastoon lisätään komennot ja niitä vastaavat oliot
 
 command_dict = {}
