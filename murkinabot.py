@@ -68,7 +68,7 @@ class Ircbot:
 
         self.socket.connect((self.server, self.port))
         self.send( 'NICK %s' % self.nick)
-        self.send( 'USER %s a a :%s' % (self.username, self.realname))
+        self.send( 'USER %s 0 * :%s' % (self.username, self.realname))
 
         # liitytään kanavalle
 
