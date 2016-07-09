@@ -86,7 +86,7 @@ class Ircbot:
 
              self.send( 'PONG ' + line[1] )
 
-        try:
+        else:
 
             # vastataan komentoihin myös yksityiskeskutelussa
 
@@ -101,13 +101,15 @@ class Ircbot:
             # kirjoitetaan tiedostoon kuka teki kyselyn ja millä parametrilla
             # f.write("%s: %s" %(line[1],line[2]))
 
+            # TODO: Älä käytä try-exceptiä ohjelma flown hallintaan -> virheitä hankala huomata
             if(len(line) > 3 and line[3] in self.commands.keys()):
-                self.commands[ line[3] ].main( self , line )
+                try:
+                    self.commands[ line[3] ].main( self , line )
 
-        except Exception as ex:
-            messageTemplate = "[WARNING] Exception of type {0} occured. Argumets:\n{1!r}"
-            message = messageTemplate.format(type(ex).__name__, ex.args)
-            print(message)
+                except Exception as ex:
+                    messageTemplate = "[WARNING] Exception of type {0} occured. Argumets:\n{1!r}"
+                    message = messageTemplate.format(type(ex).__name__, ex.args)
+                    print(message)
 
     def testing(self):
 

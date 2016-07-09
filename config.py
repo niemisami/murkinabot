@@ -7,9 +7,9 @@ PORT = 6667
 CHANNELS = [ '#murrrtesti' ]
 
 # [BOT]
-USERNAME = 'Mmmurkis'
-REALNAME = 'Mmmurkinabotti'
-NICKNAME = 'Mmmurkinabot'
+USERNAME = 'Murkis'
+REALNAME = 'Murkkinabotti'
+NICKNAME = 'Murkinabot'
 DEFAULT_EXIT_MESSAGE = 'Herrani käskee'
 
 # [OWNERS]

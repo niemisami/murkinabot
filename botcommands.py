@@ -33,7 +33,7 @@ class Quit:
             if( len(line) > 4 ): # Parametri määritelty
                 exitMessage = ' '.join( line[4:] )
             else:
-                exitMessage = EXITMESSAGE
+                exitMessage = DEFAULT_EXIT_MESSAGE
             irc.send( 'PRIVMSG %s :%s, %s' % (line[2], line[0], "sammutetaan"))
             irc.send( 'QUIT :%s' % (exitMessage) )
             irc.socket.close()
@@ -45,9 +45,12 @@ command_dict[ ':!quit' ] = Quit()
 
 class Anagram:
     def main( self, irc, line):
-        string = list( ' '.join( line[4:] ) )
-        random.shuffle(string)
-        string = ''.join(string)
+        if( len(line) > 4):
+            string = list( ' '.join( line[4:] ) )
+            random.shuffle(string)
+            string = ''.join(string)
+        else:
+            string = 'Parametri puuttuu'
         irc.send( 'PRIVMSG %s :%s' % ( line[2], string ) )
 
 command_dict[ ':!anagram' ] = Anagram()
