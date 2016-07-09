@@ -23,15 +23,15 @@ class Ircbot:
 
         # määritellään botille pääkäyttäjät
 
-        self.users = [ ':samies!sakrnie@linux.utu.fi' ]
+        self.users = [ ':Nrakhal!ohromy@linux.utu.fi' ]
 
         # välttämättömiä tietoja
 
         self.server = 'irc.utu.fi'
         self.port = 6667
-        self.username = 'murkis'
-        self.realname = 'Murkinabotti'
-        self.nick = 'murkinabot'
+        self.username = 'muurkis'
+        self.realname = 'Muurkinabotti'
+        self.nick = 'muurkinabot'
 
         # luodaan socket
 
@@ -46,18 +46,20 @@ class Ircbot:
         self.done     = 0
 
         # kanava jolle botti halutaan
-        self.channel  = '#trcfood'
+        self.channel  = '#murrrtesti'
         # self.channel  = '#murkinatesti'
 
-    def send( self, string ):
+    def send( self, string, delay=0 ):
 
         # tällä lähetetään viestejä
 
         self.socket.send( string + '\n' )
+        print("[BOT] " + string)
+        if(delay > 0 ):
+            sleep(delay)
 
     def sendWithDelay( self, string):
-        self.socket.send(string + '\n')
-        sleep(0.3)
+        self.send(string + '\n', 0.3)
 
     def connect( self ):
 
@@ -73,14 +75,14 @@ class Ircbot:
 
     def check( self, line ):
 
-        print line
+        print("[SERVER] " + line)
         line = line.split(' ')
 
         # vastataan pingiin muuten serveri katkaisee yhteyden
 
         if line[0] == 'PING':
 
-             self.send( 'PONG :abc' )
+             self.send( 'PONG ' + line[1] )
 
         try:
 
@@ -97,10 +99,13 @@ class Ircbot:
             # kirjoitetaan tiedostoon kuka teki kyselyn ja millä parametrilla
             # f.write("%s: %s" %(line[1],line[2]))
 
-            self.commands[ line[3] ].main( self , line )
+            if(len(line) > 3 and line[3] in self.commands.keys()):
+                self.commands[ line[3] ].main( self , line )
 
-        except:
-            pass
+        except Exception as ex:
+            messageTemplate = "[WARNING] Exception of type {0} occured. Argumets:\n{1!r}"
+            message = messageTemplate.format(type(ex).__name__, ex.args)
+            print(message)
 
     def testing(self):
 
