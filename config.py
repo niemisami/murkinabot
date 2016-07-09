@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Murkinabot configuration file
 
 # [SERVER]
@@ -6,9 +7,10 @@ PORT = 6667
 CHANNELS = [ '#murrrtesti' ]
 
 # [BOT]
-USERNAME = 'Murkiiis'
-REALNAME = 'Murkiiinabotti'
-NICKNAME = 'Murkiiinabot'
+USERNAME = 'Mmmurkis'
+REALNAME = 'Mmmurkinabotti'
+NICKNAME = 'Mmmurkinabot'
+DEFAULT_EXIT_MESSAGE = 'Herrani käskee'
 
 # [OWNERS]
 OWNERS = [':samies!sakrnie@linux.utu.fi', ':Nrakhal!ohromy@linux.utu.fi']

@@ -5,6 +5,7 @@ import urllib2
 from bs4 import BeautifulSoup
 from newbot import MurkinaParser
 from datetime import datetime
+from config import *
 
 # tähän sanastoon lisätään komennot ja niitä vastaavat oliot
 
@@ -29,8 +30,12 @@ class Quit:
 
         # määritellään komento vain pääkäyttäjille
         if line[0] in irc.users:
+            if( len(line) > 4 ): # Parametri määritelty
+                exitMessage = ' '.join( line[4:] )
+            else:
+                exitMessage = EXITMESSAGE
             irc.send( 'PRIVMSG %s :%s, %s' % (line[2], line[0], "sammutetaan"))
-            irc.send( 'QUIT' )
+            irc.send( 'QUIT :%s' % (exitMessage) )
             irc.socket.close()
             irc.done = 1
 
