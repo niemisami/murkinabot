@@ -15,6 +15,7 @@ komennot:
 import socket
 import botcommands
 from time import sleep
+from config import *
 
 
 class Ircbot:
@@ -23,19 +24,19 @@ class Ircbot:
 
         # määritellään botille pääkäyttäjät
 
-        self.users = [ ':Nrakhal!ohromy@linux.utu.fi' ]
+        self.users = OWNERS
 
         # välttämättömiä tietoja
 
-        self.server = 'irc.utu.fi'
-        self.port = 6667
-        self.username = 'muurkis'
-        self.realname = 'Muurkinabotti'
-        self.nick = 'muurkinabot'
+        self.server = SERVER
+        self.port = PORT
+        self.username = USERNAME
+        self.realname = REALNAME
+        self.nick = NICKNAME
 
         # luodaan socket
 
-        self.socket   = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         # haetaan botille komennot
 
@@ -43,10 +44,10 @@ class Ircbot:
 
         # päälooppia toistettan kunnes done = 1
 
-        self.done     = 0
+        self.done = 0
 
         # kanava jolle botti halutaan
-        self.channel  = '#murrrtesti'
+        self.channels  = CHANNELS
         # self.channel  = '#murkinatesti'
 
     def send( self, string, delay=0 ):
@@ -71,7 +72,8 @@ class Ircbot:
 
         # liitytään kanavalle
 
-        self.send( 'JOIN %s' % self.channel )
+        for channel in self.channels:
+            self.send( 'JOIN %s' % channel )
 
     def check( self, line ):
 
