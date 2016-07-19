@@ -15,6 +15,7 @@ komennot:
 import socket
 import botcommands
 from time import sleep
+from config import *
 
 
 class Ircbot:
@@ -23,19 +24,19 @@ class Ircbot:
 
         # määritellään botille pääkäyttäjät
 
-        self.users = [ ':samies!sakrnie@linux.utu.fi' ]
+        self.users = OWNERS
 
         # välttämättömiä tietoja
 
-        self.server = 'irc.utu.fi'
-        self.port = 6667
-        self.username = 'murkis'
-        self.realname = 'Murkinabotti'
-        self.nick = 'murkinabot'
+        self.server = SERVER
+        self.port = PORT
+        self.username = USERNAME
+        self.realname = REALNAME
+        self.nick = NICKNAME
 
         # luodaan socket
 
-        self.socket   = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         # haetaan botille komennot
 
@@ -43,21 +44,23 @@ class Ircbot:
 
         # päälooppia toistettan kunnes done = 1
 
-        self.done     = 0
+        self.done = 0
 
         # kanava jolle botti halutaan
-        self.channel  = '#trcfood'
+        self.channels  = CHANNELS
         # self.channel  = '#murkinatesti'
 
-    def send( self, string ):
+    def send( self, string, delay=0 ):
 
         # tällä lähetetään viestejä
 
         self.socket.send( string + '\n' )
+        print("[BOT] " + string)
+        if(delay > 0 ):
+            sleep(delay)
 
     def sendWithDelay( self, string):
-        self.socket.send(string + '\n')
-        sleep(0.3)
+        self.send(string + '\n', 0.3)
 
     def connect( self ):
 
@@ -65,24 +68,25 @@ class Ircbot:
 
         self.socket.connect((self.server, self.port))
         self.send( 'NICK %s' % self.nick)
-        self.send( 'USER %s a a :%s' % (self.username, self.realname))
+        self.send( 'USER %s 0 * :%s' % (self.username, self.realname))
 
         # liitytään kanavalle
 
-        self.send( 'JOIN %s' % self.channel )
+        for channel in self.channels:
+            self.send( 'JOIN %s' % channel )
 
     def check( self, line ):
 
-        print line
+        print("[SERVER] " + line)
         line = line.split(' ')
 
         # vastataan pingiin muuten serveri katkaisee yhteyden
 
         if line[0] == 'PING':
 
-             self.send( 'PONG :abc' )
+             self.send( 'PONG ' + line[1] )
 
-        try:
+        else:
 
             # vastataan komentoihin myös yksityiskeskutelussa
 
@@ -97,10 +101,15 @@ class Ircbot:
             # kirjoitetaan tiedostoon kuka teki kyselyn ja millä parametrilla
             # f.write("%s: %s" %(line[1],line[2]))
 
-            self.commands[ line[3] ].main( self , line )
+            # TODO: Älä käytä try-exceptiä ohjelma flown hallintaan -> virheitä hankala huomata
+            if(len(line) > 3 and line[3] in self.commands.keys()):
+                try:
+                    self.commands[ line[3] ].main( self , line )
 
-        except:
-            pass
+                except Exception as ex:
+                    messageTemplate = "[WARNING] Exception of type {0} occured. Argumets:\n{1!r}"
+                    message = messageTemplate.format(type(ex).__name__, ex.args)
+                    print(message)
 
     def testing(self):
 

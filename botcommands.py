@@ -5,6 +5,7 @@ import urllib2
 from bs4 import BeautifulSoup
 from newbot import MurkinaParser
 from datetime import datetime
+from config import *
 # tähän sanastoon lisätään komennot ja niitä vastaavat oliot
 
 command_dict = {}
@@ -27,25 +28,30 @@ class Quit:
     def main(self, irc, line):
 
         # määritellään komento vain pääkäyttäjille
-        if line[0] in irc.users:}}
+        if line[0] in irc.users:
+            if( len(line) > 4 ): # Parametri määritelty
+                exitMessage = ' '.join( line[4:] )
+            else:
+                exitMessage = DEFAULT_EXIT_MESSAGE
             irc.send( 'PRIVMSG %s :%s, %s' % (line[2], line[0], "sammutetaan"))
-            irc.send( 'QUIT' )
+            irc.send( 'QUIT :%s' % (exitMessage) )
             irc.socket.close()
             irc.done = 1
 
 
 command_dict[ ':!quit' ] = Quit()
 
-
 class Anagram:
     def main( self, irc, line):
-        string = list( ' '.join( line[4:] ) )
-        random.shuffle(string)
-        string = ''.join(string)
+        if( len(line) > 4):
+            string = list( ' '.join( line[4:] ) )
+            random.shuffle(string)
+            string = ''.join(string)
+        else:
+            string = 'Parametri puuttuu'
         irc.send( 'PRIVMSG %s :%s' % ( line[2], string ) )
 
 command_dict[ ':!anagram' ] = Anagram()
-
 
 class Kolikko:
     def main( self, irc, line):
@@ -133,12 +139,13 @@ class Murkinat:
                         if result:
                             if len(commands) > 1:
                                 self.send_irc(u'╭∩╮(Ο_Ο)╭∩╮')
+                            # self.log()
                             print "cool"
                         else:  
                             self.send_irc("Ei olee")
                             print "not cool"
-                    
-                    if(index == 5): # No reason to get all the restaurants and pollute irc channel
+                    if index == 5: # No reason to get all the restaurants and pollute irc channel
+
                         break
                     index += 1
 
@@ -156,7 +163,6 @@ class Murkinat:
         open_restaurants = self.return_open_restaurants(restaurant_container)
         # print open_restaurants
         random_name = self.websiteParser.get_random(open_restaurants)
-        # print random_name}
         self.parse_menu(restaurant_container, random_name)
 
     def return_wrong_name_error(self):
@@ -247,7 +253,7 @@ class Murkinat:
                 # if i != j and item_list[i] == item_list[j]:
                 #     print item_list[i]
 
-}
+
 
 class WebsiteParser:
 
