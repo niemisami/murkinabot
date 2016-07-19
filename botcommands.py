@@ -5,6 +5,8 @@ import urllib2
 from bs4 import BeautifulSoup
 from newbot import MurkinaParser
 from datetime import datetime
+from config import *
+
 # tähän sanastoon lisätään komennot ja niitä vastaavat oliot
 
 command_dict = {}
@@ -28,8 +30,12 @@ class Quit:
 
         # määritellään komento vain pääkäyttäjille
         if line[0] in irc.users:
+            if( len(line) > 4 ): # Parametri määritelty
+                exitMessage = ' '.join( line[4:] )
+            else:
+                exitMessage = DEFAULT_EXIT_MESSAGE
             irc.send( 'PRIVMSG %s :%s, %s' % (line[2], line[0], "sammutetaan"))
-            irc.send( 'QUIT' )
+            irc.send( 'QUIT :%s' % (exitMessage) )
             irc.socket.close()
             irc.done = 1
 
@@ -39,12 +45,25 @@ command_dict[ ':!quit' ] = Quit()
 
 class Anagram:
     def main( self, irc, line):
-        string = list( ' '.join( line[4:] ) )
-        random.shuffle(string)
-        string = ''.join(string)
+        if( len(line) > 4):
+            string = list( ' '.join( line[4:] ) )
+            random.shuffle(string)
+            string = ''.join(string)
+        else:
+            string = 'Parametri puuttuu'
         irc.send( 'PRIVMSG %s :%s' % ( line[2], string ) )
 
 command_dict[ ':!anagram' ] = Anagram()
+
+class Kolikko:
+    def main( self, irc, line):
+        replyTo = line[0][1:line[0].index('!')]
+        cointoss = random.randint(0,1)
+        result = "Klaava" if cointoss == 0 else "Kruuna"
+        string = replyTo + ": " + result
+        irc.send( 'PRIVMSG %s :%s' % (line[2], string) )
+
+command_dict[ ':!kolikko' ] = Kolikko()
 
 class Murkinat:
 
