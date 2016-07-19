@@ -27,7 +27,7 @@ class Quit:
     def main(self, irc, line):
 
         # määritellään komento vain pääkäyttäjille
-        if line[0] in irc.users:
+        if line[0] in irc.users:}}
             irc.send( 'PRIVMSG %s :%s, %s' % (line[2], line[0], "sammutetaan"))
             irc.send( 'QUIT' )
             irc.socket.close()
@@ -131,13 +131,14 @@ class Murkinat:
                     else: 
                         result = self.parse_menu(restaurant_container, restaurant_name)
                         if result:
-                            # self.log()
+                            if len(commands) > 1:
+                                self.send_irc(u'╭∩╮(Ο_Ο)╭∩╮')
                             print "cool"
                         else:  
                             self.send_irc("Ei olee")
                             print "not cool"
                     
-                    if(index > 5): # No reason to get all the restaurants and pollute irc channel
+                    if(index == 5): # No reason to get all the restaurants and pollute irc channel
                         break
                     index += 1
 
@@ -155,7 +156,7 @@ class Murkinat:
         open_restaurants = self.return_open_restaurants(restaurant_container)
         # print open_restaurants
         random_name = self.websiteParser.get_random(open_restaurants)
-        # print random_name
+        # print random_name}
         self.parse_menu(restaurant_container, random_name)
 
     def return_wrong_name_error(self):
@@ -246,7 +247,7 @@ class Murkinat:
                 # if i != j and item_list[i] == item_list[j]:
                 #     print item_list[i]
 
-
+}
 
 class WebsiteParser:
 
