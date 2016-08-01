@@ -212,7 +212,7 @@ class Murkinat:
                             for mealName in mealNames:
                             
                                     for m in mealName.stripped_strings:
-                                        self.send_irc(m)
+                                        self.send_irc("|- " + m)
                         return True #Success
 
                 except UnicodeEncodeError as err:
