@@ -138,9 +138,7 @@ class Murkinat:
                         result = self.parse_menu(restaurant_container, restaurant_name)
                         if result:
                             if len(commands) > 1:
-                                self.send_irc(u'╭∩╮(Ο_Ο)╭∩╮')
-                            # self.log()
-                            print "cool"
+                            print "Still looking for menu"
                         else:  
                             self.send_irc("Ei olee")
                             print "not cool"
