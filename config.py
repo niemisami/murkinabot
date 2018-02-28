@@ -4,7 +4,7 @@
 # [SERVER]
 SERVER = 'irc.utu.fi'
 PORT = 6667
-CHANNELS = [ '#trcfood' ]
+CHANNELS = [ '#paavinkadet' ]
 
 # [BOT]
 USERNAME = 'Murkis'

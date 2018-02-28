@@ -3,7 +3,7 @@
 from bs4 import BeautifulSoup
 import os
 import string
-import urllib2
+import urllib
 import sys
 
 
@@ -40,7 +40,7 @@ class MurkinaParser:
             #     print "ae'd"
             self.real_names = name.split(",")
 
-        print self.real_names
+        print(self.real_names)
 
         self.parse_other_names()
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import random
-import urllib2
+import urllib
 from bs4 import BeautifulSoup
 from newbot import MurkinaParser
 from datetime import datetime
@@ -123,7 +123,7 @@ class Murkinat:
 
             elif command == "random":
                 random_name = self.return_random_restaurant(restaurant_container)
-                print random_name
+                print(random_name)
 
             else:
                 index = 0
@@ -138,10 +138,10 @@ class Murkinat:
                         result = self.parse_menu(restaurant_container, restaurant_name)
                         if result:
                             if len(commands) > 1:
-                            print "Still looking for menu"
+                                print("Still looking for menu")
                         else:  
                             self.send_irc("Ei olee")
-                            print "not cool"
+                            print("not cool")
                     if index == 5: # No reason to get all the restaurants and pollute irc channel
 
                         break
@@ -213,7 +213,7 @@ class Murkinat:
                         return True #Success
 
                 except UnicodeEncodeError as err:
-                    print 'Error'
+                    print('Error')
                     errors.write("Error")
         return False #Fail
 
@@ -239,7 +239,7 @@ class Murkinat:
         #     print "khyl"
         #     return encodable_text.encode('utf-8').replace('\xc3\xa4', 'ä')
         if u'c2a0' in encodable_text:
-            print "encoding "
+            print("encoding ")
             return encodable_text.replace('c2a0'.decode('hex'), ' ')
         return encodable_text
 
@@ -260,7 +260,7 @@ class WebsiteParser:
 
         #####BeautifulSoup helper methods########
     def parse_website(self, url):
-        return urllib2.urlopen(url).read()
+        return urllib.urlopen(url).read()
 
         # Returns BeautifulSoup item instances as an array. Class e.g "restaurant"
     def parse_div_class_from(self, html_form, class_name):
@@ -319,12 +319,12 @@ class JuhannusKeneraattori:
 
     def main(self, irc, line):
         if len(line[4]) > 0: 
-            jussinimet = ['Dallaspulla','Jeesus','Kossu','Huittisten','Amkkihomo','Onneksi olkoon Mikko','Läski','Kalanaama','Diplomi-Insinööri','Selfie','Homo','Hintti','Hupsu','Perse','Aasi','Aamukalja','Sammuja','Ripuli','Juhannussija','Vässykkä','Penseä','DJ-Sorslund','Hukkuja','Juliuksen mökin viimeinen hereillä oleva sankari joka on ollut ihan törkeässä kännissä koko viikonlopun','Pippelöijä','Forsman','Spagetti']
+            jussinimet = ['Dallaspulla','Jeesus','Kossu','Huittisten','Amkkihomo','Onneksi olkoon Mikko','Läski','Kalanaama','Diplomi-Insinööri','Selfie','Homo','Hintti','Hupsu','Perse','Aasi','Aamukalja','Sammuja','Ripuli','Vässykkä','Penseä','DJ-Sorslund','Hukkuja', 'Pippelöijä','Forsman','Spagetti', 'Titeeni', 'Vessadeeku', 'Jeesus', 'Pääsiäispupu', 'Pupunmetsästäjä', 'Riipputissi', 'Pantava', 'Opetuslapsi', 'Sika', 'Kunnanvaltuutettu', 'Matu', 'Munahaukka', 'Munamasa']
             nameArgs = ''
             for index, name in enumerate(line):
                 if(index >= 4):
                     nameArgs += '%s ' % line[index] 
-            juhannusnimi = "Juhannusnimesi on: %s" % random.choice(jussinimet) + "-" + nameArgs.title()
+            juhannusnimi = "Pääsiäisnimesi on: %s" % random.choice(jussinimet) + "-" + nameArgs.title()
             # print "testi: " + nameArgs;
             irc.send( 'PRIVMSG %s :%s' % ( line[2], juhannusnimi))
         else:
@@ -376,6 +376,6 @@ class Jokes:
 
 command_dict[ ':!murkinat' ] = Murkinat()
 
-command_dict[ ':!juhannusnimi' ] = JuhannusKeneraattori()
+command_dict[ ':!pääsiäisnimi' ] = JuhannusKeneraattori()
 
 command_dict[ ':!vitshumor' ] = Jokes()
